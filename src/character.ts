@@ -1,7 +1,8 @@
 import { Character, ModelProviderName, defaultCharacter } from "@ai16z/eliza";
-
+import { flakePlugin } from "./attentionPlugin.ts";
 export const character: Character = {
     ...defaultCharacter,
+    plugins: [flakePlugin]
     // name: "Eliza",
     // plugins: [],
     // clients: [],
