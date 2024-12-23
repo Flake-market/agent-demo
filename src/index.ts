@@ -33,6 +33,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { character } from "./character.ts";
 import type { DirectClient } from "@ai16z/client-direct";
+import { RequestWebhookReceiver } from './requestWebhook.ts';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
 
@@ -262,6 +267,15 @@ async function startAgent(character: Character, directClient: DirectClient) {
 
     await runtime.initialize();
 
+    const webhookReceiver = new RequestWebhookReceiver(
+      Number(process.env.WEBHOOK_PORT || 3003),
+      process.env.WEBHOOK_DOMAIN || 'localhost',
+      runtime
+    );
+  
+    // Start the webhook receiver
+    webhookReceiver.start();
+
     const clients = await initializeClients(character, runtime);
 
     directClient.registerAgent(runtime);
@@ -278,6 +292,14 @@ async function startAgent(character: Character, directClient: DirectClient) {
 }
 
 const startAgents = async () => {
+  // const webhookReceiver = new RequestWebhookReceiver(
+  //   Number(process.env.WEBHOOK_PORT || 3003),
+  //   process.env.WEBHOOK_DOMAIN || 'localhost'
+  // );
+
+  // // Start the webhook receiver
+  // webhookReceiver.start();
+  
   const directClient = await DirectClientInterface.start();
   const args = parseArguments();
 
